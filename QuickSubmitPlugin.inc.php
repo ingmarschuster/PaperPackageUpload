@@ -1,13 +1,13 @@
 <?php
 
 /**
- * @file plugins/importexport/quickSubmit/QuickSubmitPlugin.inc.php
+ * @file plugins/importexport/paperPackageUpload/PaperPackageUploadPlugin.inc.php
  *
- * Copyright (c) 2003-2012 John Willinsky
+ * Copyright (c) 2013 University of Potsdam, 2003-2012 John Willinsky
  * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
  *
- * @class QuickSubmitPlugin
- * @ingroup plugins_importexport_quickSubmit
+ * @class PaperPackageUploadPlugin
+ * @ingroup plugins_importexport_paperPackageUpload
  *
  * @brief Quick Submit one-page submission plugin
  */
@@ -15,7 +15,7 @@
 
 import('classes.plugins.ImportExportPlugin');
 
-class QuickSubmitPlugin extends ImportExportPlugin {
+class PaperPackageUploadPlugin extends ImportExportPlugin {
 
 	/**
 	 * Called as a plugin is registered to the registry
@@ -35,15 +35,15 @@ class QuickSubmitPlugin extends ImportExportPlugin {
 	 * @return String name of plugin
 	 */
 	function getName() {
-		return 'QuickSubmitPlugin';
+		return 'PaperPackageUploadPlugin';
 	}
 
 	function getDisplayName() {
-		return __('plugins.importexport.quickSubmit.displayName');
+		return __('plugins.importexport.paperPackageUpload.displayName');
 	}
 
 	function getDescription() {
-		return __('plugins.importexport.quickSubmit.description');
+		return __('plugins.importexport.paperPackageUpload.description');
 	}
 
 	function display(&$args) {
@@ -55,11 +55,11 @@ class QuickSubmitPlugin extends ImportExportPlugin {
 		if (array_shift($args) == 'saveSubmit') {
 			$this->saveSubmit($args);
 		} else {
-			$this->import('QuickSubmitForm');
+			$this->import('PaperPackageUploadForm');
 			if (checkPhpVersion('5.0.0')) { // WARNING: This form needs $this in constructor
-				$form = new QuickSubmitForm($this);
+				$form = new PaperPackageUploadForm($this);
 			} else {
-				$form =& new QuickSubmitForm($this);
+				$form =& new PaperPackageUploadForm($this);
 			}
 			if ($form->isLocaleResubmit()) {
 				$form->readInputData();
@@ -77,11 +77,11 @@ class QuickSubmitPlugin extends ImportExportPlugin {
 	function saveSubmit($args) {
 		$templateMgr =& TemplateManager::getManager();
 
-		$this->import('QuickSubmitForm');
+		$this->import('PaperPackageUploadForm');
 		if (checkPhpVersion('5.0.0')) { // WARNING: This form needs $this in constructor
-			$form = new QuickSubmitForm($this);
+			$form = new PaperPackageUploadForm($this);
 		} else {
-			$form =& new QuickSubmitForm($this);
+			$form =& new PaperPackageUploadForm($this);
 		}
 		$form->readInputData();
 		$formLocale = $form->getFormLocale();

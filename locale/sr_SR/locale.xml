@@ -4,7 +4,7 @@
 <!--
   * locale.xml
   *
-  * Copyright (c) 2003-2012 John Willinsky
+  * Copyright (c) 2013 University of Potsdam, 2003-2012 John Willinsky
   * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
   *
   * Localization strings for the sr_SR (Serbian) locale.
@@ -13,19 +13,19 @@
   -->
 
 <locale name="sr_SR" full_name="Serbian">
-	<message key="plugins.importexport.quickSubmit.addToExisting">Dodaj u postojeći broj:</message>
-	<message key="plugins.importexport.quickSubmit.chooseDestination">Odredište predaje</message>
-	<message key="plugins.importexport.quickSubmit.chooseDestinationDescription">Odredite da li predaja rada ide u postojeći broj ili u uredništvo.</message>
-	<message key="plugins.importexport.quickSubmit.displayName">Dodatak za brzu predaju radova</message>
-	<message key="plugins.importexport.quickSubmit.description">Dodatak za predaju radova u jednom koraku</message>
-	<message key="plugins.importexport.quickSubmit.descriptionLong">Ovaj dodatak omogućuje da brzo predate rad u uredništvo ili direktno u časopis.</message>
-	<message key="plugins.importexport.quickSubmit.issueRequired">Morate da odaberete broj da biste dodali članak u njega.</message>
-	<message key="plugins.importexport.quickSubmit.leaveUnpublished">Ostavi neobjavljeno</message>
-	<message key="plugins.importexport.quickSubmit.saveAndCreateAnother">Sačuvaj i napravi novi</message>
-	<message key="plugins.importexport.quickSubmit.submissionData">Datum predaje</message>	
-	<message key="plugins.importexport.quickSubmit.submissionDescription">Izaberite fajl koji će se koristiti kao krajnji prikaz ovog rada u časopisu.</message>	
-	<message key="plugins.importexport.quickSubmit.submissionRequired">Morate da dodate fajl uz ovu predaju.</message>	
-	<message key="plugins.importexport.quickSubmit.success">Članak je dodat</message>
-	<message key="plugins.importexport.quickSubmit.successDescription">Pravljenje članka je uspešno završeno</message>
-	<message key="plugins.importexport.quickSubmit.successReturn">Vrati se na dodatak</message>
+	<message key="plugins.importexport.paperPackageUpload.addToExisting">Dodaj u postojeći broj:</message>
+	<message key="plugins.importexport.paperPackageUpload.chooseDestination">Odredište predaje</message>
+	<message key="plugins.importexport.paperPackageUpload.chooseDestinationDescription">Odredite da li predaja rada ide u postojeći broj ili u uredništvo.</message>
+	<message key="plugins.importexport.paperPackageUpload.displayName">Dodatak za brzu predaju radova</message>
+	<message key="plugins.importexport.paperPackageUpload.description">Dodatak za predaju radova u jednom koraku</message>
+	<message key="plugins.importexport.paperPackageUpload.descriptionLong">Ovaj dodatak omogućuje da brzo predate rad u uredništvo ili direktno u časopis.</message>
+	<message key="plugins.importexport.paperPackageUpload.issueRequired">Morate da odaberete broj da biste dodali članak u njega.</message>
+	<message key="plugins.importexport.paperPackageUpload.leaveUnpublished">Ostavi neobjavljeno</message>
+	<message key="plugins.importexport.paperPackageUpload.saveAndCreateAnother">Sačuvaj i napravi novi</message>
+	<message key="plugins.importexport.paperPackageUpload.submissionData">Datum predaje</message>	
+	<message key="plugins.importexport.paperPackageUpload.submissionDescription">Izaberite fajl koji će se koristiti kao krajnji prikaz ovog rada u časopisu.</message>	
+	<message key="plugins.importexport.paperPackageUpload.submissionRequired">Morate da dodate fajl uz ovu predaju.</message>	
+	<message key="plugins.importexport.paperPackageUpload.success">Članak je dodat</message>
+	<message key="plugins.importexport.paperPackageUpload.successDescription">Pravljenje članka je uspešno završeno</message>
+	<message key="plugins.importexport.paperPackageUpload.successReturn">Vrati se na dodatak</message>
 </locale>

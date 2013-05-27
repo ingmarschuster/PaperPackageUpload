@@ -1,7 +1,7 @@
 {**
  * index.tpl
  *
- * Copyright (c) 2003-2012 John Willinsky
+ * Copyright (c) 2013 University of Potsdam, 2003-2012 John Willinsky
  * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
  *
  * Template for one-page submission form
@@ -9,7 +9,7 @@
  * $Id$
  *}
 {strip}
-{assign var="pageTitle" value="plugins.importexport.quickSubmit.displayName"}
+{assign var="pageTitle" value="plugins.importexport.paperPackageUpload.displayName"}
 {include file="common/header.tpl"}
 {/strip}
 
@@ -38,7 +38,7 @@ function updateAbstractRequired() {
 </script>
 {/literal}
 
-<p>{translate key="plugins.importexport.quickSubmit.descriptionLong"}</p>
+<p>{translate key="plugins.importexport.paperPackageUpload.descriptionLong"}</p>
 
 <form enctype="multipart/form-data" name="submit" method="post" action="{plugin_url path="saveSubmit"}">
 
@@ -50,7 +50,7 @@ function updateAbstractRequired() {
 	<tr valign="top">
 		<td width="20%" class="label">{fieldLabel name="formLocale" key="form.formLanguage"}</td>
 		<td width="80%" class="value">
-			{plugin_url|assign:"quickSubmitUrl" escape=false}
+			{plugin_url|assign:"paperPackageUploadUrl" escape=false}
 			{* Maintain localized author info across requests *}
 			{foreach from=$authors key=authorIndex item=author}
 				{if $currentJournal->getSetting('requireAuthorCompetingInterests')}
@@ -65,7 +65,7 @@ function updateAbstractRequired() {
 					{if $thisLocale != $formLocale}<input type="hidden" name="authors[{$authorIndex|escape}][affiliation][{$thisLocale|escape}]" value="{$thisAffiliation|escape}" />{/if}
 				{/foreach}
 			{/foreach}
-			{form_language_chooser form="submit" url=$quickSubmitUrl}
+			{form_language_chooser form="submit" url=$paperPackageUploadUrl}
 			<span class="instruct">{translate key="form.formLanguage.description"}</span>
 		</td>
 	</tr>
@@ -74,23 +74,23 @@ function updateAbstractRequired() {
 {/if}
 
 <div id="chooseDestination">
-	<h3>{translate key="plugins.importexport.quickSubmit.chooseDestination"}</h3>
+	<h3>{translate key="plugins.importexport.paperPackageUpload.chooseDestination"}</h3>
 
-	<p>{translate key="plugins.importexport.quickSubmit.chooseDestinationDescription"}</p>
+	<p>{translate key="plugins.importexport.paperPackageUpload.chooseDestinationDescription"}</p>
 
 	<table class="data" width="100%">
 		<tr valign="top">
 			<td class="label" width="5%">
 				<input type="radio" name="destination" id="destinationUnpublished" value="queue" {if not $publishToIssue} checked="checked"{/if}{if $enablePageNumber} onclick="document.submit.pages.disabled = true;document.submit.pagesHidden.value = document.submit.pages.value; document.submit.pages.value = '';"{/if}/>
 			</td>
-			<td colspan="2" class="value" width="95%">{fieldLabel name="destinationUnpublished" key="plugins.importexport.quickSubmit.leaveUnpublished"}</td>
+			<td colspan="2" class="value" width="95%">{fieldLabel name="destinationUnpublished" key="plugins.importexport.paperPackageUpload.leaveUnpublished"}</td>
 		</tr>
 		<tr valign="top">
 			<td rowspan="2" class="label">
 				<input type="radio" id="destinationIssue" name="destination" value="issue" {if $publishToIssue} checked="checked"{/if}{if $enablePageNumber} onclick="document.submit.pages.disabled = false;document.submit.pages.value = document.submit.pagesHidden.value;"{/if}/>
 			</td>
 			<td width="20%" class="value">
-				{fieldLabel name="destinationIssue" key="plugins.importexport.quickSubmit.addToExisting"}
+				{fieldLabel name="destinationIssue" key="plugins.importexport.paperPackageUpload.addToExisting"}
 			</td>
 			<td class="value">
 				<select name="issueId" id="issueId" size="1" class="selectMenu">{html_options options=$issueOptions selected=$issueNumber}</select>
@@ -132,7 +132,7 @@ function updateAbstractRequired() {
 
 <br />
 
-<h3>{translate key="plugins.importexport.quickSubmit.submissionData"}</h3>
+<h3>{translate key="plugins.importexport.paperPackageUpload.submissionData"}</h3>
 
 <div id="submission" style="margin: 0 10px 0 10px;">
 	<div id="section">
@@ -177,7 +177,7 @@ function updateAbstractRequired() {
 		</tr>
 		{else}
 		<tr valign="top">
-			<td colspan="2" class="nodata">{translate key="plugins.importexport.quickSubmit.submissionDescription"}</td>
+			<td colspan="2" class="nodata">{translate key="plugins.importexport.paperPackageUpload.submissionDescription"}</td>
 		</tr>
 		{/if}
 		</table>
@@ -202,7 +202,7 @@ function updateAbstractRequired() {
 	</div>  <!-- /addSubmissionFile -->
 
 	<div id="supplementaryFile">
-		<h4>{translate key="plugins.importexport.quickSubmit.suppFile"}</h4>
+		<h4>{translate key="plugins.importexport.paperPackageUpload.suppFile"}</h4>
 		<table class="data" width="100%">
 		{if $supplementaryFile}
 		<tr valign="top">
@@ -219,7 +219,7 @@ function updateAbstractRequired() {
 		</tr>
 		{else}
 		<tr valign="top">
-			<td colspan="2" class="nodata">{translate key="plugins.importexport.quickSubmit.suppDescription"}</td>
+			<td colspan="2" class="nodata">{translate key="plugins.importexport.paperPackageUpload.suppDescription"}</td>
 		</tr>
 		{/if}
 		</table>
@@ -231,7 +231,7 @@ function updateAbstractRequired() {
 		<tr>
 			<td width="30%" class="label">
 				{if $supplementaryFile}
-					{fieldLabel name="supplementaryFile" key="plugins.importexport.quickSubmit.replaceSuppFile"}
+					{fieldLabel name="supplementaryFile" key="plugins.importexport.paperPackageUpload.replaceSuppFile"}
 				{else}
 					{fieldLabel name="supplementaryFile" key="author.submit.uploadSuppFile"}
 				{/if}
@@ -543,7 +543,7 @@ function updateAbstractRequired() {
 <div class="separator"></div>
 
 <p><input type="submit" value="{translate key="common.saveAndContinue"}" class="button defaultButton" />   
-<input type="submit" class="button" name="createAnother" value="{translate key="plugins.importexport.quickSubmit.saveAndCreateAnother"}" />    
+<input type="submit" class="button" name="createAnother" value="{translate key="plugins.importexport.paperPackageUpload.saveAndCreateAnother"}" />    
 <input type="button" value="{translate key="common.cancel"}" class="button" onclick="confirmAction('{url page="author"}', '{translate|escape:"jsparam" key="author.submit.cancelSubmission"}')" /></p>
 
 <p><span class="formRequired">{translate key="common.requiredField"}</span></p>
