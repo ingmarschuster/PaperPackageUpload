@@ -89,7 +89,6 @@ class QuickSubmitForm extends Form {
 		$tempSupplFileId = $this->getData('tempSupplFileId');
 		if (isset($tempSupplFileId[$formLocale]) && $tempSupplFileId[$formLocale] > 0) {
 			$supplementaryFile = $temporaryFileManager->getFile($tempSupplFileId[$formLocale], $user->getId());
-			error_log("OJS - SupplementaryFile is ". $supplementaryFile);
 			$templateMgr->assign_by_ref('supplementaryFile', $supplementaryFile);
 		}
 
@@ -159,15 +158,12 @@ class QuickSubmitForm extends Form {
 		import('classes.file.TemporaryFileManager');
 		$temporaryFileManager = new TemporaryFileManager();
 		$user =& Request::getUser();
-		error_log("OJS - handleUpload(".$fileName.",".$user->getId().")");
 
 		$temporaryFile = $temporaryFileManager->handleUpload($fileName, $user->getId());
 
 		if ($temporaryFile) {
-		    error_log("OJS - submission file being uploaded (".$temporaryFile->getId().")\n");
 			return $temporaryFile->getId();
 		} else {
-			error_log("OJS - No submissionf file found");
 			return false;
 		}
 	}
@@ -182,16 +178,13 @@ class QuickSubmitForm extends Form {
 		$temporaryFileManager = new TemporaryFileManager();
 		$user =& Request::getUser();
 
-		error_log("OJS - handleUpload(".$fileName.",".$user->getId().")");
 
 		$temporaryFile = $temporaryFileManager->handleUpload($fileName, $user->getId());
 		
 
 		if ($temporaryFile) {
-			error_log("OJS- Paper Package supp file being uploaded (".$temporaryFile->getId().")\n");
 			return $temporaryFile->getId();
 		} else {
-			error_log("OJS - no temporary suppl file");
 			return false;
 		}
 	}
@@ -335,7 +328,6 @@ class QuickSubmitForm extends Form {
 		//Add uploaded Supplementary file
 
 		$tempSupplFileIds = $this->getData('tempSupplFileId');
-		error_log("OJS - Paper Package upload - ".$tempSupplFileId);
 		foreach (array_keys($tempSupplFileIds) as $locale) {
 			$temporaryFile = $temporaryFileManager->getFile($tempSupplFileIds[$locale], $user->getId());
 			$fileId = null;
