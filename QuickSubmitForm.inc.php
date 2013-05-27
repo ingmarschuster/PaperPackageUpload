@@ -29,6 +29,8 @@ class QuickSubmitForm extends Form {
 		$this->addCheck(new FormValidatorPost($this));
 		$this->addCheck(new FormValidator($this, 'sectionId', 'required', 'author.submit.form.sectionRequired'));
 		$this->addCheck(new FormValidatorCustom($this, 'tempFileId', 'required', 'plugins.importexport.quickSubmit.submissionRequired', create_function('$tempFileId', 'return $tempFileId > 0;')));
+		$this->addCheck(new FormValidatorCustom($this, 'tempSupplFileId', 'required', 'plugins.importexport.quickSubmit.supplRequired', create_function('$tempSupplFileId', 'return $tempSupplFileId > 0;')));
+
 		$this->addCheck(new FormValidatorCustom($this, 'sectionId', 'required', 'author.submit.form.sectionRequired', array(DAORegistry::getDAO('SectionDAO'), 'sectionExists'), array($journal->getId())));
 		$this->addCheck(new FormValidatorCustom($this, 'authors', 'required', 'author.submit.form.authorRequired', create_function('$authors', 'return count($authors) > 0;')));
 		$this->addCheck(new FormValidatorCustom($this, 'destination', 'required', 'plugins.importexport.quickSubmit.issueRequired', create_function('$destination, $form', 'return $destination == \'queue\'? true : ($form->getData(\'issueId\') > 0);'), array(&$this)));
@@ -44,7 +46,7 @@ class QuickSubmitForm extends Form {
 	 * @return array
 	 */
 	function getLocaleFieldNames() {
-		return array('tempFileId', 'title', 'abstract', 'discipline', 'subjectClass', 'subject', 'coverageGeo', 'coverageChron', 'coverageSample', 'type', 'sponsor');
+		return array('tempFileId','tempSupplFileId', 'title', 'abstract', 'discipline', 'subjectClass', 'subject', 'coverageGeo', 'coverageChron', 'coverageSample', 'type', 'sponsor');
 	}
 
 	/**
@@ -84,6 +86,12 @@ class QuickSubmitForm extends Form {
 			$submissionFile = $temporaryFileManager->getFile($tempFileId[$formLocale], $user->getId());
 			$templateMgr->assign_by_ref('submissionFile', $submissionFile);
 		}
+		$tempSupplFileId = $this->getData('tempSupplFileId');
+		if (isset($tempSupplFileId[$formLocale]) && $tempSupplFileId[$formLocale] > 0) {
+			$supplementaryFile = $temporaryFileManager->getFile($tempSupplFileId[$formLocale], $user->getId());
+			error_log("OJS - SupplementaryFile is ". $supplementaryFile);
+			$templateMgr->assign_by_ref('supplementaryFile', $supplementaryFile);
+		}
 
 		if (Request::getUserVar('addAuthor') || Request::getUserVar('delAuthor')  || Request::getUserVar('moveAuthor')) {
 			$templateMgr->assign('scrollToAuthor', true);
@@ -109,6 +117,7 @@ class QuickSubmitForm extends Form {
 		$this->readUserVars(
 			array(
 				'tempFileId',
+				'tempSupplFileId',
 				'destination',
 				'issueId',
 				'pages',
@@ -150,12 +159,39 @@ class QuickSubmitForm extends Form {
 		import('classes.file.TemporaryFileManager');
 		$temporaryFileManager = new TemporaryFileManager();
 		$user =& Request::getUser();
+		error_log("OJS - handleUpload(".$fileName.",".$user->getId().")");
 
 		$temporaryFile = $temporaryFileManager->handleUpload($fileName, $user->getId());
 
 		if ($temporaryFile) {
+		    error_log("OJS - submission file being uploaded (".$temporaryFile->getId().")\n");
 			return $temporaryFile->getId();
 		} else {
+			error_log("OJS - No submissionf file found");
+			return false;
+		}
+	}
+	
+	/**
+	 * Upload the supplementary file.
+	 * @param $fileName string
+	 * @return int TemporaryFile ID
+	 */
+	function uploadSupplementaryFile($fileName) {
+		import('classes.file.TemporaryFileManager');
+		$temporaryFileManager = new TemporaryFileManager();
+		$user =& Request::getUser();
+
+		error_log("OJS - handleUpload(".$fileName.",".$user->getId().")");
+
+		$temporaryFile = $temporaryFileManager->handleUpload($fileName, $user->getId());
+		
+
+		if ($temporaryFile) {
+			error_log("OJS- Paper Package supp file being uploaded (".$temporaryFile->getId().")\n");
+			return $temporaryFile->getId();
+		} else {
+			error_log("OJS - no temporary suppl file");
 			return false;
 		}
 	}
@@ -294,6 +330,22 @@ class QuickSubmitForm extends Form {
 			// Update file search index
 			import('classes.search.ArticleSearchIndex');
 			if (isset($galley)) ArticleSearchIndex::updateFileIndex($galley->getArticleId(), ARTICLE_SEARCH_GALLEY_FILE, $galley->getFileId());
+		}
+		
+		//Add uploaded Supplementary file
+
+		$tempSupplFileIds = $this->getData('tempSupplFileId');
+		error_log("OJS - Paper Package upload - ".$tempSupplFileId);
+		foreach (array_keys($tempSupplFileIds) as $locale) {
+			$temporaryFile = $temporaryFileManager->getFile($tempSupplFileIds[$locale], $user->getId());
+			$fileId = null;
+			if ($temporaryFile) {
+				$fileId = $articleFileManager->temporaryFileToArticleFile($temporaryFile, ARTICLE_FILE_SUPP);
+				$fileType = $temporaryFile->getFileType();
+
+			}
+
+
 		}
 
 

@@ -25,6 +25,15 @@
 	<message key="plugins.importexport.quickSubmit.submissionData">Submission Data</message>	
 	<message key="plugins.importexport.quickSubmit.submissionDescription">Choose the file to be used as the final galley file for this submission.</message>	
 	<message key="plugins.importexport.quickSubmit.submissionRequired">You must upload a file for this submission.</message>	
+
+
+	<message key="plugins.importexport.quickSubmit.suppData">Supplementary Data</message>
+	<message key="plugins.importexport.quickSubmit.suppDescription">Choose the file to be used as supplementary material.</message> 
+	<message key="plugins.importexport.quickSubmit.suppRequired">You must upload a supplementary file for this submission.</message>
+	<message key="plugins.importexport.quickSubmit.suppFile">Supplementary File</message>
+	<message key="plugins.importexport.quickSubmit.replaceSuppFile">Replace supplementary file</message>
+
+
 	<message key="plugins.importexport.quickSubmit.success">Article Added</message>
 	<message key="plugins.importexport.quickSubmit.successDescription">Article creation was successful.</message>
 	<message key="plugins.importexport.quickSubmit.successReturn">Return to QuickSubmit plugin.</message>

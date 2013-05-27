@@ -25,6 +25,13 @@
 	<message key="plugins.importexport.quickSubmit.submissionData">Daten der Einreichung</message>	
 	<message key="plugins.importexport.quickSubmit.submissionDescription">Wählen Sie die Datei aus, die als fertige Fahne für diese Einreichung verwendet werden soll.</message>	
 	<message key="plugins.importexport.quickSubmit.submissionRequired">Sie müssen für diese Einreichung eine Datei hochladen.</message>	
+
+	<message key="plugins.importexport.quickSubmit.suppData">Ergänzende Daten der Einreichung</message>
+	<message key="plugins.importexport.quickSubmit.suppDescription">Wählen Sie die Datei aus, die als ergänzendes Material für diese Einreichung verwendet werden soll.</message> 
+	<message key="plugins.importexport.quickSubmit.suppRequired">Sie müssen für diese Einreichung ergänzendes Material hochladen.</message>
+	<message key="plugins.importexport.quickSubmit.suppFile">Datei für ergänzendes Material</message>
+	<message key="plugins.importexport.quickSubmit.replaceSuppFile">Datei für ergänzendes Material ersetzen/message>
+
 	<message key="plugins.importexport.quickSubmit.success">Artikel hinzugefügt</message>
 	<message key="plugins.importexport.quickSubmit.successDescription">Anlegen des Artikels war erfolgreich.</message>
 	<message key="plugins.importexport.quickSubmit.successReturn">Zum Schnelleinreichungs-Plug-In zurückkehren.</message>

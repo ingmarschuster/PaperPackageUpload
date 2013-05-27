@@ -200,6 +200,49 @@ function updateAbstractRequired() {
 		</tr>
 		</table>
 	</div>  <!-- /addSubmissionFile -->
+
+	<div id="supplementaryFile">
+		<h4>{translate key="plugins.importexport.quickSubmit.suppFile"}</h4>
+		<table class="data" width="100%">
+		{if $supplementaryFile}
+		<tr valign="top">
+			<td width="30%" class="label">{translate key="common.originalFileName"}</td>
+			<td width="70%" class="value">{$supplementaryFile->getOriginalFileName()|escape}</td>
+		</tr>
+		<tr valign="top">
+			<td width="30%" class="label">{translate key="common.fileSize"}</td>
+			<td width="70%" class="value">{$supplementaryFile->getNiceFileSize()}</td>
+		</tr>
+		<tr valign="top">
+			<td width="30%" class="label">{translate key="common.dateUploaded"}</td>
+			<td width="70%" class="value">{$supplementaryFile->getDateUploaded()|date_format:$datetimeFormatShort}</td>
+		</tr>
+		{else}
+		<tr valign="top">
+			<td colspan="2" class="nodata">{translate key="plugins.importexport.quickSubmit.suppDescription"}</td>
+		</tr>
+		{/if}
+		</table>
+	</div> <!-- /supplementaryFile -->
+	
+	<div id="addSupplFile">
+		<input type="hidden" name="tempSupplFileId[{$formLocale|escape}]" id="tempSupplFileId" value="{$tempSupplFileId[$formLocale]|escape}" />
+		<table class="data" width="100%">
+		<tr>
+			<td width="30%" class="label">
+				{if $supplementaryFile}
+					{fieldLabel name="supplementaryFile" key="plugins.importexport.quickSubmit.replaceSuppFile"}
+				{else}
+					{fieldLabel name="supplementaryFile" key="author.submit.uploadSuppFile"}
+				{/if}
+			</td>
+			<td width="70%" class="value">
+				<input type="file" class="uploadField" name="supplementaryFile" id="supplementaryFileUpload" /> <input name="uploadSupplementaryFile" type="submit" class="button" value="{translate key="common.upload"}" />
+			</td>
+		</tr>
+		</table>
+	</div>  <!-- /addSupplFile -->
+
 	
 	<div id="authors">
 		<h4>{translate key="article.authors"}</h4>

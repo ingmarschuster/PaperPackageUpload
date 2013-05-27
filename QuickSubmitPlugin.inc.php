@@ -141,6 +141,12 @@ class QuickSubmitPlugin extends ImportExportPlugin {
 			$tempFileId = $form->getData('tempFileId');
 			$tempFileId[$formLocale] = $form->uploadSubmissionFile('submissionFile');
 			$form->setData('tempFileId', $tempFileId);
+		}  else if (Request::getUserVar('uploadSupplementaryFile')) {
+		        $editData = true;
+			$tempSupplFileId = $form->getData('tempSupplFileId');
+			
+			$tempSupplFileId[$formLocale] = $form->uploadSupplementaryFile('supplementaryFile');
+			$form->setData('tempSupplFileId', $tempSupplFileId);
 		}
 
 		if (Request::getUserVar('createAnother') && $form->validate()) {
