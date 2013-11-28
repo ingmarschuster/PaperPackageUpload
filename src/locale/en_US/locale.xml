@@ -25,6 +25,7 @@
 	<message key="plugins.importexport.paperPackageUpload.submissionData">Submission Data</message>	
 	<message key="plugins.importexport.paperPackageUpload.submissionDescription">Choose the file to be used as the final galley file for this submission.</message>	
 	<message key="plugins.importexport.paperPackageUpload.submissionRequired">You must upload a file for this submission.</message>	
+    <message key="plugins.importexport.paperPackageUpload.dateRequired">You must enter the date of publication for the original paper.</message>
 
 
 	<message key="plugins.importexport.paperPackageUpload.suppData">Supplementary Data</message>

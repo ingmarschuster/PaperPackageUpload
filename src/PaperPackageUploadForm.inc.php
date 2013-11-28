@@ -30,6 +30,7 @@ class PaperPackageUploadForm extends Form {
 		$this->addCheck(new FormValidator($this, 'sectionId', 'required', 'author.submit.form.sectionRequired'));
 		$this->addCheck(new FormValidatorCustom($this, 'tempFileId', 'required', 'plugins.importexport.paperPackageUpload.submissionRequired', create_function('$tempFileId', 'return $tempFileId > 0;')));
 		$this->addCheck(new FormValidatorCustom($this, 'tempSupplFileId', 'required', 'plugins.importexport.paperPackageUpload.supplRequired', create_function('$tempSupplFileId', 'return $tempSupplFileId > 0;')));
+        $this->addCheck(new FormValidatorCustom($this, 'datePublished', 'required', 'plugins.importexport.paperPackageUpload.dateRequired', create_function('$destination, $form', 'return is_int($form->getData(\'datePublished\'));'), array(&$this)));
 
 		$this->addCheck(new FormValidatorCustom($this, 'sectionId', 'required', 'author.submit.form.sectionRequired', array(DAORegistry::getDAO('SectionDAO'), 'sectionExists'), array($journal->getId())));
 		$this->addCheck(new FormValidatorCustom($this, 'authors', 'required', 'author.submit.form.authorRequired', create_function('$authors', 'return count($authors) > 0;')));
