@@ -14,7 +14,6 @@
 
 
 import('lib.pkp.classes.form.Form');
-
 class PaperPackageUploadForm extends Form {
 
 	/**
@@ -22,39 +21,44 @@ class PaperPackageUploadForm extends Form {
 	 * @param $plugin object
 	 */
 	function PaperPackageUploadForm(&$plugin) {
-		parent::Form($plugin->getTemplatePath() . 'index.tpl');
+                parent::Form($plugin->getTemplatePath() . 'index.tpl');
 
 		$journal =& Request::getJournal();
 
-		$this->addCheck(new FormValidatorPost($this));
+                import('plugins.importexport.paperPackageUpload.FormValidatorUpload');
+                import('plugins.importexport.paperPackageUpload.FormValidatorFileType');
+	        $this->addCheck(new FormValidatorPost($this));
 		$this->addCheck(new FormValidator($this, 'sectionId', 'required', 'author.submit.form.sectionRequired'));
-		$this->addCheck(new FormValidatorCustom($this, 'tempFileId', 'required', 'plugins.importexport.paperPackageUpload.submissionRequired', create_function('$tempFileId', 'return $tempFileId > 0;')));
-		$this->addCheck(new FormValidatorCustom($this, 'tempSupplFileId', 'required', 'plugins.importexport.paperPackageUpload.supplRequired', create_function('$tempSupplFileId', 'return $tempSupplFileId > 0;')));
-        $this->addCheck(new FormValidatorCustom($this, 'datePublished', 'required', 'plugins.importexport.paperPackageUpload.dateRequired', create_function('$destination, $form', 'return is_int($form->getData(\'datePublished\'));'), array(&$this)));
-
+	        $this->addCheck(new FormValidatorUpload($this, 'tempFileId', 'required', 'plugins.importexport.paperPackageUpload.submissionRequired'));
+		$this->addCheck(new FormValidatorUpload($this, 'tempSupplFileId', 'required', 'plugins.importexport.paperPackageUpload.supplRequired'));
+                $this->addCheck(new FormValidatorFileType($this, 'tempSupplFileId', 'required', 'plugins.importexport.paperPackageUpload.supplUnpackable'));
+                $this->addCheck(new FormValidatorCustom($this, 'datePublished', 'required', 'plugins.importexport.paperPackageUpload.dateRequired', create_function('$destination, $form', 'return is_int($form->getData(\'datePublished\'));'), array(&$this)));
 		$this->addCheck(new FormValidatorCustom($this, 'sectionId', 'required', 'author.submit.form.sectionRequired', array(DAORegistry::getDAO('SectionDAO'), 'sectionExists'), array($journal->getId())));
 		$this->addCheck(new FormValidatorCustom($this, 'authors', 'required', 'author.submit.form.authorRequired', create_function('$authors', 'return count($authors) > 0;')));
 		$this->addCheck(new FormValidatorCustom($this, 'destination', 'required', 'plugins.importexport.paperPackageUpload.issueRequired', create_function('$destination, $form', 'return $destination == \'queue\'? true : ($form->getData(\'issueId\') > 0);'), array(&$this)));
-		$this->addCheck(new FormValidatorArray($this, 'authors', 'required', 'author.submit.form.authorRequiredFields', array('firstName', 'lastName')));
-		$this->addCheck(new FormValidatorArrayCustom($this, 'authors', 'required', 'user.profile.form.emailRequired', create_function('$email, $regExp', 'return String::regexp_match($regExp, $email);'), array(ValidatorEmail::getRegexp()), false, array('email')));
+		$this->addCheck(new FormValidatorArray($this, 'authors', 'required', 'plugins.importexport.paperPackageUpload.authorRequiredFields', array('firstName', 'lastName')));
+		$this->addCheck(new FormValidatorArrayCustom($this, 'authors', 'required', 'user.profile.form.emailRequired', create_function('$email, $regExp', 'return empty($email) ? true : String::regexp_match($regExp, $email);'), array(ValidatorEmail::getRegexp()), false, array('email')));
 		$this->addCheck(new FormValidatorArrayCustom($this, 'authors', 'required', 'user.profile.form.urlInvalid', create_function('$url, $regExp', 'return empty($url) ? true : String::regexp_match($regExp, $url);'), array(ValidatorUrl::getRegexp()), false, array('url')));
 		$this->addCheck(new FormValidatorLocale($this, 'title', 'required', 'author.submit.form.titleRequired'));
+ 		$this->addCheck(new FormValidatorLocale($this, 'originalJournal', 'required', 'plugins.importexport.paperPackageUpload.originalJournalRequired'));
 
 	}
+
+
 
 	/**
 	 * Get the names of fields for which data should be localized
 	 * @return array
 	 */
 	function getLocaleFieldNames() {
-		return array('tempFileId','tempSupplFileId', 'title', 'abstract', 'discipline', 'subjectClass', 'subject', 'coverageGeo', 'coverageChron', 'coverageSample', 'type', 'sponsor');
+		return array('tempFileId','tempSupplFileId', 'title', 'abstract', 'originalJournal', 'discipline', 'subjectClass', 'subject', 'coverageGeo', 'coverageChron', 'coverageSample', 'type', 'sponsor');
 	}
 
 	/**
 	 * Display the form.
 	 */
 	function display() {
-		$templateMgr =& TemplateManager::getManager();
+                $templateMgr =& TemplateManager::getManager();
 		$user =& Request::getUser();
 		$journal =& Request::getJournal();
 		$formLocale = $this->getFormLocale();
@@ -125,7 +129,8 @@ class PaperPackageUploadForm extends Form {
 				'authors',
 				'primaryContact',
 				'title',
-				'abstract',
+				'abstract', 
+				'originalJournal',
 				'discipline',
 				'subjectClass',
 				'subject',
@@ -147,6 +152,7 @@ class PaperPackageUploadForm extends Form {
 		$section =& $sectionDao->getSection($this->getData('sectionId'));
 		if ($section && !$section->getAbstractsNotRequired()) {
 			$this->addCheck(new FormValidatorLocale($this, 'abstract', 'required', 'author.submit.form.abstractRequired'));
+//	                $this->addCheck(new FormValidatorLocale($this, 'originalJournal', 'required', 'plugins.importexport.paperPackageUpload.originalJournalRequired'));	
 		}
 	}
 
@@ -163,7 +169,7 @@ class PaperPackageUploadForm extends Form {
 		$temporaryFile = $temporaryFileManager->handleUpload($fileName, $user->getId());
 
 		if ($temporaryFile) {
-			return $temporaryFile->getId();
+		        return $temporaryFile->getId();
 		} else {
 			return false;
 		}
@@ -178,7 +184,6 @@ class PaperPackageUploadForm extends Form {
 		import('classes.file.TemporaryFileManager');
 		$temporaryFileManager = new TemporaryFileManager();
 		$user =& Request::getUser();
-
 
 		$temporaryFile = $temporaryFileManager->handleUpload($fileName, $user->getId());
 		
@@ -211,8 +216,16 @@ class PaperPackageUploadForm extends Form {
 		$article->setSectionId($this->getData('sectionId'));
 		$article->setLanguage(String::substr($journal->getPrimaryLocale(), 0, 2));
 		$article->setTitle($this->getData('title'), null); // Localized
-		$article->setAbstract($this->getData('abstract'), null); // Localized
-		$article->setDiscipline($this->getData('discipline'), null); // Localized
+	      //add Original Journal to Abstract  
+	        $orig_journal = $this->getData('originalJournal');
+		$abstr = $this->getData('abstract');
+	       foreach(array_keys($abstr) AS $abs_key){
+		$abstr[$abs_key] .=  '  <p id="originalPub"> ' . $orig_journal[$abs_key]. ' </p> ';
+
+		 $this->setData('abstract',$abstr);
+		}
+   	        $article->setAbstract($this->getData('abstract'), null); // Localized
+	        $article->setDiscipline($this->getData('discipline'), null); // Localized
 		$article->setSubjectClass($this->getData('subjectClass'), null); // Localized
 		$article->setSubject($this->getData('subject'), null); // Localized
 		$article->setCoverageGeo($this->getData('coverageGeo'), null); // Localized
