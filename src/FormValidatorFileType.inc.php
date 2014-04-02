@@ -14,19 +14,19 @@ class FormValidatorFileType extends FormValidator {
         * @param $
 	*/
 	function FormValidatorFileType(&$form, $field, $type, $message) {
-           parent::FormValidator($form, $field, $type, $message);
+           parent::FormValidator($form, $field, $type, $message, $this);
 	}
 
         function isValid(){
         $filePathId = $this->getFieldValue();
-	import('lib.pkp.classes.file.TemporaryFileDAO');
+        import('lib.pkp.classes.file.TemporaryFileDAO');
 	$tempFileDAO = new TemporaryFileDAO();
         $finfo = new finfo(FILEINFO_MIME);
-		
+
 	   foreach($filePathId as $fId){
 		
 	     if(is_numeric($fId)){
-             
+
 	       $user =& Request::getUser();
                $tempFile = $tempFileDAO->getTemporaryFile($fId,$user->getId());
 	       $file_path= $tempFile->getFilePath();
@@ -34,9 +34,10 @@ class FormValidatorFileType extends FormValidator {
                $pattern = "/application\/zip/";
 
                if(preg_match($pattern, $fType)) return true;
-
+               
                return false;
-                }
+              }
+	      return true;
 	    }
        }
   }	

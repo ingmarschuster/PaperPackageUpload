@@ -27,11 +27,17 @@ class PaperPackageUploadForm extends Form {
 
                 import('plugins.importexport.paperPackageUpload.FormValidatorUpload');
                 import('plugins.importexport.paperPackageUpload.FormValidatorFileType');
-	        $this->addCheck(new FormValidatorPost($this));
+	        import('plugins.importexport.paperPackageUpload.FormValidatorHandle');
+         	import('plugins.importexport.paperPackageUpload.FormValidatorHandleOrFile');
+		$this->addCheck(new FormValidatorPost($this));
 		$this->addCheck(new FormValidator($this, 'sectionId', 'required', 'author.submit.form.sectionRequired'));
-	        $this->addCheck(new FormValidatorUpload($this, 'tempFileId', 'required', 'plugins.importexport.paperPackageUpload.submissionRequired'));
-		$this->addCheck(new FormValidatorUpload($this, 'tempSupplFileId', 'required', 'plugins.importexport.paperPackageUpload.supplRequired'));
-                $this->addCheck(new FormValidatorFileType($this, 'tempSupplFileId', 'required', 'plugins.importexport.paperPackageUpload.supplUnpackable'));
+                $this->addCheck(new FormValidatorUpload($this, 'submissionHandle', 'required', 'plugins.importexport.paperPackageUpload.submissionHandleRequired', 'tempFileId'));
+                $this->addCheck(new FormValidatorUpload($this, 'supplHandle', 'required', 'plugins.importexport.paperPackageUpload.supplHandleRequired', 'tempSupplFileId'));
+                $this->addCheck(new FormValidatorHandle($this, 'submissionHandle', 'required', 'plugins.importexport.paperPackageUpload.submissionHandleIsWrong'));
+                $this->addCheck(new FormValidatorHandle($this, 'supplHandle', 'required', 'plugins.importexport.paperPackageUpload.supplHandleIsWrong'));
+		$this->addCheck(new FormValidatorHandleOrFile($this, 'submissionHandle', 'required', 'plugins.importexport.paperPackageUpload.submissionHandleOrFile', 'tempFileId'));
+		$this->addCheck(new FormValidatorHandleOrFile($this, 'supplHandle', 'required', 'plugins.importexport.paperPackageUpload.supplHandleOrFile', 'tempSupplFileId'));
+		$this->addCheck(new FormValidatorFileType($this, 'tempSupplFileId', 'required', 'plugins.importexport.paperPackageUpload.supplUnpackable'));
                 $this->addCheck(new FormValidatorCustom($this, 'datePublished', 'required', 'plugins.importexport.paperPackageUpload.dateRequired', create_function('$destination, $form', 'return is_int($form->getData(\'datePublished\'));'), array(&$this)));
 		$this->addCheck(new FormValidatorCustom($this, 'sectionId', 'required', 'author.submit.form.sectionRequired', array(DAORegistry::getDAO('SectionDAO'), 'sectionExists'), array($journal->getId())));
 		$this->addCheck(new FormValidatorCustom($this, 'authors', 'required', 'author.submit.form.authorRequired', create_function('$authors', 'return count($authors) > 0;')));
@@ -51,7 +57,7 @@ class PaperPackageUploadForm extends Form {
 	 * @return array
 	 */
 	function getLocaleFieldNames() {
-		return array('tempFileId','tempSupplFileId', 'title', 'abstract', 'originalJournal', 'discipline', 'subjectClass', 'subject', 'coverageGeo', 'coverageChron', 'coverageSample', 'type', 'sponsor');
+		return array('tempFileId','tempSupplFileId', 'submissionHandle', 'supplHandle', 'title', 'abstract', 'originalJournal', 'discipline', 'subjectClass', 'subject', 'coverageGeo', 'coverageChron', 'coverageSample', 'type', 'sponsor');
 	}
 
 	/**
@@ -122,6 +128,8 @@ class PaperPackageUploadForm extends Form {
 			array(
 				'tempFileId',
 				'tempSupplFileId',
+				'submissionHandle',
+		                'supplHandle',
 				'destination',
 				'issueId',
 				'pages',
@@ -152,7 +160,6 @@ class PaperPackageUploadForm extends Form {
 		$section =& $sectionDao->getSection($this->getData('sectionId'));
 		if ($section && !$section->getAbstractsNotRequired()) {
 			$this->addCheck(new FormValidatorLocale($this, 'abstract', 'required', 'author.submit.form.abstractRequired'));
-//	                $this->addCheck(new FormValidatorLocale($this, 'originalJournal', 'required', 'plugins.importexport.paperPackageUpload.originalJournalRequired'));	
 		}
 	}
 
@@ -186,14 +193,177 @@ class PaperPackageUploadForm extends Form {
 		$user =& Request::getUser();
 
 		$temporaryFile = $temporaryFileManager->handleUpload($fileName, $user->getId());
-		
+	      
 
 		if ($temporaryFile) {
-			return $temporaryFile->getId();
+		        return $temporaryFile->getId();
 		} else {
 			return false;
 		}
 	}
+
+      /**
+      * Inserts files into database, which have not been a temporary file before.
+      *@param $nameOfFile string
+      *@param $fileStage constant, ARTICLE_FILE_SUBMISSION or ARTICLE_FILE_SUPP
+      *@param $fileType string, txt/plain or application/pdf
+      *@param $article_id string
+      *@param $pathToFile string, path were to find the file which is inserted here
+      */
+
+       function insertArticleFile($nameOfFile, $fileStage, $fileType, $article_id, $pathToFile){
+       
+        import('classes.file.ArticleFileManager');
+        $articleFileManager= new ArticleFileManager($article_id);
+        $articleFileDao =& DAORegistry::getDAO('ArticleFileDAO');
+
+        $fileTypePath = $articleFileManager->typeToPath($fileStage);
+        $dir = $articleFileManager->filesDir . $fileTypePath . '/';
+
+        $articleFile =& $articleFileManager->generateDummyFile($articleFileManager->article);
+        $articleFile->setFileType($fileType);
+        $articleFile->setOriginalFileName($nameOfFile);
+        $articleFile->setType($fileTypePath);
+        $articleFile->setRound($articleFileManager->article->getCurrentRound());
+        $articleFile->setAssocId(null);
+
+
+        $newFileName = $articleFileManager->generateFilename($articleFile, $fileStage, $articleFile->getOriginalFileName());
+        if (!$articleFileManager->copyFile($pathToFile . $nameOfFile, $dir.$newFileName)) {
+            // Delete the dummy file we inserted
+              $articleFileDao->deleteArticleFileById($articleFile->getFileId());
+              return false;
+        }
+
+         $articleFile->setFileSize(filesize($dir.$newFileName));
+         $articleFileDao->updateArticleFile($articleFile);
+         $articleFileManager->removePriorRevisions($articleFile->getFileId(), $articleFile->getRevision());
+         
+         return $articleFile->getFileId();
+
+       }
+
+
+
+       /**
+       *Create a new PDF-file containing a direkt link to download the files metadata
+       *@param $handle string
+       *@param $article_id string
+       *@param $fileType string, type should be 'submission','copyedit' or 'supplementary' 
+       */
+      function createHandlePDF($handle, $article_id, $handleType){
+        $nameOfFile;
+	$fileStage;
+	$endOfPath;
+	$pdfInsertText;
+        $fileType = 'application/pdf';
+
+	if($handleType == 'submission'){
+	    $nameOfFile = 'REMOTE_PAPER.pdf';
+	    $fileStage = ARTICLE_FILE_SUBMISSION;
+	    $endOfPath = '/submission/original/';
+	    $pdfInsertText = 'preprint-files';
+	}
+	elseif($handleType == 'copyedit'){
+	    $nameOfFile = 'REMOTE_PAPER.pdf';
+	    $fileStage = ARTICLE_FILE_COPYEDIT;
+	    $endOfPath = '/submission/copyedit/';
+	    $pdfInsertText = 'preprint-files';
+	}
+	elseif($handleType == 'supplementary'){
+	    $nameOfFile = 'REMOTE_SUPPLEMENTARY.pdf';
+            $fileStage = ARTICLE_FILE_SUPP;
+            $endOfPath = '/supp/';
+            $pdfInsertText = 'supplementary-files';
+	}
+	else{
+	    return false;
+	}
+
+       //create PDF with content
+	import('plugins.importexport.paperPackageUpload.PDF');
+	$pdf = new PDF();
+        $pdf->AddPage();
+	$pdf->SetFont('Arial','',13);
+        $pdf->Write(5, "This PDF-file contains the " . $pdfInsertText  . " handle:  " . $handle);
+	$pdf->Ln();
+	$pdf->SetFont('','U');
+	$pdf->SetTextColor(30,70,200);
+        $link = $pdf->createHandleLink($handle);
+	$pdf->Write(5,'Download ' . $pdfInsertText  . ' metadata',$link);
+        $pdf->SetFont('');
+	
+	$journal =& Request::getJournal();
+	$journal_id= $journal->getId();
+
+       //make path and save pdf there
+       $pathToFile = Config::getVar('files', 'files_dir') . 'journals/' . $journal_id . '/articles/' . $article_id . $endOfPath;
+       if(!file_exists($pathToFile)){ 
+	   mkdir($pathToFile, 0777, true);
+	}
+	 $pdf->Output($pathToFile . $nameOfFile, 'F');
+     
+       //insert article into database
+        $articleFileId = $this->insertArticleFile($nameOfFile, $fileStage, $fileType, $article_id, $pathToFile);
+	return $articleFileId;
+      }
+
+
+	/**
+	*Create a new txt-file with the given handle and insert it into database.
+	*@param $handle string
+	*@param $article_id string
+	*@param $handleType string, submission, copyedit or supplementary
+	*/
+	function createHandleTXTFile($handle, $article_id, $handleType){
+       
+	   $journal =& Request::getJournal();
+           $journal_id= $journal->getId();
+
+           $nameOfFile;
+           $fileStage;
+           $endOfPath;
+           $fileType = 'txt/plain';
+
+      if($handleType == 'submission'){
+             $nameOfFile = 'REMOTE_PAPER';
+             $fileStage = ARTICLE_FILE_SUBMISSION;
+             $endOfPath = '/submission/original/';
+             $contentOfFile = 'Paper: ' . $handle;
+      }
+      elseif($handleType == 'copyedit'){
+             $nameOfFile = 'REMOTE_PAPER';
+             $fileStage = ARTICLE_FILE_COPYEDIT;
+             $endOfPath = '/submission/copyedit/';
+             $contentOfFile = 'Paper: ' . $handle;
+      }
+      elseif($handleType == 'supplementary'){
+            $nameOfFile = 'REMOTE_SUPPLEMENTARY';
+            $fileStage = ARTICLE_FILE_SUPP;
+            $endOfPath = '/supp/'; 
+	    $contentOfFile = 'Supplementary material: ' . $handle;
+     }
+     else{
+            return false;
+     }
+
+       // create path to txt-file and the file with its content
+       $pathToFile = Config::getVar('files', 'files_dir') . 'journals/' . $journal_id . '/articles/' . $article_id . $endOfPath;
+       if(!file_exists($pathToFile)){
+           mkdir($pathToFile, 0777, true);
+	}
+	    $articleFile=fopen($pathToFile . $nameOfFile, "w");
+            fwrite($articleFile, $contentOfFile);
+            fclose($articleFile);
+
+
+        //insert ArticleFile
+            $articleFileId = $this->insertArticleFile($nameOfFile, $fileStage, $fileType, $article_id, $pathToFile);
+            return $articleFileId;
+
+	}
+
+
 
 	/**
 	 * Save settings.
@@ -287,17 +457,63 @@ class PaperPackageUploadForm extends Form {
 			}
 		}
 
+              // Check whether the user gave a handle and create a handleSubmissionFile in case
+	       $submissionHandle=$this->getData('submissionHandle');
+	       $handleSubmissionFileId;
+               $handleCheck = FALSE;	    
+	       
+             //import FileManager before creating Files because otherwise naming of the copied files failes  
+             import('classes.file.ArticleFileManager');
+
+	       foreach (array_keys($submissionHandle) as $locale){
+	           if(!empty($submissionHandle[$locale])){
+		   $handleCheck = TRUE;
+	           $handleSubmissionId = $this->createHandleTXTFile($submissionHandle[$locale], $articleId, 'submission');
+		   $handleCopyeditId = $this->createHandleTXTFile($submissionHandle[$locale], $articleId, 'copyedit');
+	           $handleSubmissionPDFId = $this->createHandlePDF($submissionHandle[$locale], $articleId, 'submission');
+		   $handleCopyeditPDFId = $this->createHandlePDF($submissionHandle[$locale], $articleId, 'copyedit');
+
+		   //Add the handle submission files as galley
+		   import('classes.article.ArticleGalley');
+		   $galley = new ArticleGalley();
+		     $galley->setArticleId($articleId);
+		     $galley->setFileId($handleSubmissionPDFId);
+		     $galley->setLocale($locale);
+		     //$galley->setFileType('pdf');
+		     $galley->setFileType('application/pdf');
+		     $galley->setLabel('PDF');
+		     
+		     $galleyDao =& DAORegistry::getDAO('ArticleGalleyDAO');
+		     $galleyDao->insertGalley($galley);
+                     }
+                   
+	    if($handleCheck==TRUE){
+		     if ($locale == $journal->getPrimaryLocale()) {
+		     $article->setSubmissionFileId($handleSubmissionPDFId);
+		     $article->SetReviewFileId($handleSubmissionPDFId);
+		     }
+
+		     // Update file search index
+		     import('classes.search.ArticleSearchIndex');
+		     if (isset($galley)) ArticleSearchIndex::updateFileIndex($galley->getArticleId(), ARTICLE_SEARCH_GALLEY_FILE, $galley->getFileId());
+	       }
+        }
+
+
 		// Add the submission files as galleys
 		import('classes.file.TemporaryFileManager');
 		import('classes.file.ArticleFileManager');
 		$tempFileIds = $this->getData('tempFileId');
 		$temporaryFileManager = new TemporaryFileManager();
 		$articleFileManager = new ArticleFileManager($articleId);
+		$tempFileCheck=FALSE;
+
 		foreach (array_keys($tempFileIds) as $locale) {
 			$temporaryFile = $temporaryFileManager->getFile($tempFileIds[$locale], $user->getId());
 			$fileId = null;
 			if ($temporaryFile) {
-				$fileId = $articleFileManager->temporaryFileToArticleFile($temporaryFile, ARTICLE_FILE_SUBMISSION);
+			     $tempFileCheck=TRUE;
+			        $fileId = $articleFileManager->temporaryFileToArticleFile($temporaryFile, ARTICLE_FILE_SUBMISSION);
 				$fileType = $temporaryFile->getFileType();
 
 				if (strstr($fileType, 'html')) {
@@ -327,8 +543,10 @@ class PaperPackageUploadForm extends Form {
 
 				$galleyDao =& DAORegistry::getDAO('ArticleGalleyDAO');
 				$galleyDao->insertGalley($galley);
-			}
 
+			}
+               
+               if($tempFileCheck==TRUE){
 			if ($locale == $journal->getPrimaryLocale()) {
 				$article->setSubmissionFileId($fileId);
 				$article->SetReviewFileId($fileId);
@@ -337,8 +555,24 @@ class PaperPackageUploadForm extends Form {
 			// Update file search index
 			import('classes.search.ArticleSearchIndex');
 			if (isset($galley)) ArticleSearchIndex::updateFileIndex($galley->getArticleId(), ARTICLE_SEARCH_GALLEY_FILE, $galley->getFileId());
+		
 		}
 		
+              }  
+
+
+                //Check whether the user gave a handle and create handleSupplFile in case
+
+                 $supplHandle=$this->getData('supplHandle');
+                 $handleSuppFileId = null;
+	       
+	       foreach (array_keys($supplHandle) as $locale){
+                     if(!empty($supplHandle[$locale])){
+                     $handleSuppFileId = $this->createHandleTXTFile($supplHandle[$locale], $articleId, 'supplementary');
+                     $handleSupplPDFFileID = $this->createHandlePDF($submissionHandle[$locale], $articleId, 'supplementary'); 
+		     }
+               }
+
 		//Add uploaded Supplementary file
 
 		$tempSupplFileIds = $this->getData('tempSupplFileId');

@@ -12,6 +12,6 @@
 <version>
 	<application>paperPackageUpload</application>
 	<type>plugins.importexport</type>
-	<release>0.9.2.0</release>
-	<date>2013-28-11</date>
+	<release>0.9.3.0</release>
+	<date>2014-04-02</date>
 </version>

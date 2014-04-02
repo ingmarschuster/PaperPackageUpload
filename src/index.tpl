@@ -134,6 +134,7 @@ function updateAbstractRequired() {
 
 <h3>{translate key="plugins.importexport.paperPackageUpload.submissionData"}</h3>
 
+
 <div id="submission" style="margin: 0 10px 0 10px;">
 	<div id="section">
 		{if count($sectionOptions) == 2}
@@ -158,9 +159,10 @@ function updateAbstractRequired() {
 		
 		{/if}{* if count($sectionOptions) == 2 *}
 	</div> <!-- /section -->
-	
+
+
 	<div id="submissionFile">
-		<h4>{translate key="author.submit.submissionFile"}</h4>
+            <h4>{fieldLabel required="true" key="plugins.importexport.paperPackageUpload.submissionFile"}</h4>
 		<table class="data" width="100%">
 		{if $submissionFile}
 		<tr valign="top">
@@ -177,12 +179,22 @@ function updateAbstractRequired() {
 		</tr>
 		{else}
 		<tr valign="top">
-			<td colspan="2" class="nodata">{translate key="plugins.importexport.paperPackageUpload.submissionDescription"}</td>
+			<td colspan="2" class="nodata">{translate key="plugins.importexport.paperPackageUpload.submissionHandleDescription"}</td>
 		</tr>
 		{/if}
 		</table>
 	</div> <!-- /submissionFile -->
-	
+
+       <div id="submissionHandle">
+               <table width="100%" class="data">
+
+              <tr valign="top">
+                      <td width="30%" class="label">{fieldLabel name="submissionHandle" key="plugins.importexport.paperPackageUpload.submissionHandle"}</td>
+                      <td width="70%" class="value"><input type="text" class="textField" name="submissionHandle[{$formLocale|escape}]" id="submissionHandle" value="{$submissionHandle[$formLocale]|escape}" size="40" maxlength="50" /></td>
+              </tr>
+              </table>
+       </div> <!--/submissionHandle-->
+
 	<div id="addSubmissionFile">
 		<input type="hidden" name="tempFileId[{$formLocale|escape}]" id="tempFileId" value="{$tempFileId[$formLocale]|escape}" />
 		<table class="data" width="100%">
@@ -191,7 +203,7 @@ function updateAbstractRequired() {
 				{if $submissionFile}
 					{fieldLabel name="submissionFile" key="author.submit.replaceSubmissionFile"}
 				{else}
-					{fieldLabel name="submissionFile" required="true" key="plugins.importexport.paperPackageUpload.uploadSubmissionFile"}
+					{fieldLabel name="submissionFile" key="plugins.importexport.paperPackageUpload.uploadSubmissionFile"}
 				{/if}
 			</td>
 			<td width="70%" class="value">
@@ -202,7 +214,7 @@ function updateAbstractRequired() {
 	</div>  <!-- /addSubmissionFile -->
 
 	<div id="supplementaryFile">
-		<h4>{translate key="plugins.importexport.paperPackageUpload.suppFile"}</h4>
+	    <h4>{fieldLabel required="true" key="plugins.importexport.paperPackageUpload.suppFile"}</h4>
 		<table class="data" width="100%">
 		{if $supplementaryFile}
 		<tr valign="top">
@@ -219,12 +231,24 @@ function updateAbstractRequired() {
 		</tr>
 		{else}
 		<tr valign="top">
-			<td colspan="2" class="nodata">{translate key="plugins.importexport.paperPackageUpload.suppDescription"}</td>
+			<td colspan="2" class="nodata">{translate key="plugins.importexport.paperPackageUpload.supplHandleDescription"}</td>
 		</tr>
 		{/if}
 		</table>
 	</div> <!-- /supplementaryFile -->
-	
+
+        <div id="supplHandle">
+                <table width="100%" class="data">
+
+                 <tr valign="top">
+                        <td width="30%" class="label">{fieldLabel name="supplHandle" key="plugins.importexport.paperPackageUpload.supplHandle"}</td>
+                        <td width="70%" class="value"><input type="text" class="textField" name="supplHandle[{$formLocale|escape}]" id="supplHandle" value="{$supplHandle[$formLocale]|escape}" size="40" maxlength="50" /></td>
+                 </tr>
+                </table>
+         </div> <!--/supplHandle-->
+
+
+
 	<div id="addSupplFile">
 		<input type="hidden" name="tempSupplFileId[{$formLocale|escape}]" id="tempSupplFileId" value="{$tempSupplFileId[$formLocale]|escape}" />
 		<table class="data" width="100%">
@@ -233,7 +257,7 @@ function updateAbstractRequired() {
 				{if $supplementaryFile}
 					{fieldLabel name="supplementaryFile" key="plugins.importexport.paperPackageUpload.replaceSuppFile"}
 				{else}
-					{fieldLabel name="supplementaryFile" required="true" key="plugins.importexport.paperPackageUpload.uploadSuppFile"}
+					{fieldLabel name="supplementaryFile" key="plugins.importexport.paperPackageUpload.uploadSuppFile"}
 				{/if}
 			</td>
 			<td width="70%" class="value">
