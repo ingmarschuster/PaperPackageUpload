@@ -97,10 +97,10 @@ function updateAbstractRequired() {
 			</td>
 		</tr>
 		<tr valign="top">
-			<td class="label">
-				<label for="issueId">{translate key="editor.issues.published"}</label>
-			</td>
+			<td class="label">{fieldLabel name="datePublished" required="true" key="plugins.importexport.paperPackageUpload.datePublished"}</td>
 			<td class="value">
+				<input type="hidden" name="datePublishedMonth" value="01">
+				<input type="hidden" name="datePublishedDay" value="1">
 				{* Find good values for starting and ending year options *}
 				{assign var=currentYear value=$smarty.now|date_format:"%Y"}
 				{if $datePublished}
@@ -112,7 +112,7 @@ function updateAbstractRequired() {
 					{math|assign:"minYear" equation="x-10" x=$currentYear}
 					{math|assign:"maxYear" equation="x+2" x=$currentYear}
 				{/if}
-				{html_select_date prefix="datePublished" time=$datePublished|default:"---" all_extra="class=\"selectMenu\"" start_year=$minYear end_year=$maxYear year_empty="common.year"|translate month_empty="common.month"|translate day_empty="common.day"|translate}
+				{html_select_date prefix="datePublished" time=$datePublished|default:"---" all_extra="class=\"selectMenu\"" start_year=$minYear end_year=$maxYear year_empty="common.year"|translate month_empty="common.month"|translate day_empty="common.day"|translate display_years=true display_months=false display_days=false}
 			</td>
 		</tr>
 		{if $enablePageNumber}
@@ -191,7 +191,7 @@ function updateAbstractRequired() {
 				{if $submissionFile}
 					{fieldLabel name="submissionFile" key="author.submit.replaceSubmissionFile"}
 				{else}
-					{fieldLabel name="submissionFile" key="author.submit.uploadSubmissionFile"}
+					{fieldLabel name="submissionFile" required="true" key="plugins.importexport.paperPackageUpload.uploadSubmissionFile"}
 				{/if}
 			</td>
 			<td width="70%" class="value">
@@ -233,7 +233,7 @@ function updateAbstractRequired() {
 				{if $supplementaryFile}
 					{fieldLabel name="supplementaryFile" key="plugins.importexport.paperPackageUpload.replaceSuppFile"}
 				{else}
-					{fieldLabel name="supplementaryFile" key="author.submit.uploadSuppFile"}
+					{fieldLabel name="supplementaryFile" required="true" key="plugins.importexport.paperPackageUpload.uploadSuppFile"}
 				{/if}
 			</td>
 			<td width="70%" class="value">
@@ -271,7 +271,7 @@ function updateAbstractRequired() {
 				<td width="70%" class="value"><input type="text" class="textField" name="authors[{$authorIndex|escape}][lastName]" id="authors-{$authorIndex|escape}-lastName" value="{$author.lastName|escape}" size="20" maxlength="90" /></td>
 			</tr>
 			<tr valign="top">
-				<td width="30%" class="label">{fieldLabel name="authors-$authorIndex-email" required="true" key="user.email"}</td>
+				<td width="30%" class="label">{fieldLabel name="authors-$authorIndex-email" key="user.email"}</td>
 				<td width="70%" class="value"><input type="text" class="textField" name="authors[{$authorIndex|escape}][email]" id="authors-{$authorIndex|escape}-email" value="{$author.email|escape}" size="30" maxlength="90" /></td>
 			</tr>
 			<tr valign="top">
@@ -349,7 +349,7 @@ function updateAbstractRequired() {
 				</td>
 			</tr>
 			<tr valign="top">
-				<td width="30%" class="label">{fieldLabel name="authors-0-email" required="true" key="user.email"}</td>
+				<td width="30%" class="label">{fieldLabel name="authors-0-email" key="user.email"}</td>
 				<td width="70%" class="value"><input type="text" class="textField" name="authors[0][email]" id="authors-0-email" size="30" maxlength="90" /></td>
 			</tr>
 			<tr valign="top">
@@ -373,7 +373,7 @@ function updateAbstractRequired() {
 	</div> <!-- /authors -->
 	
 	<div id="titleAndAbstract">
-		<h4>{translate key="submission.titleAndAbstract"}</h4>
+		<h4>{translate key="plugins.importexport.paperPackageUpload.titleAndAbstract"}</h4>
 		
 		<table width="100%" class="data">
 		
@@ -390,7 +390,12 @@ function updateAbstractRequired() {
 			<td width="30%" class="label">{fieldLabel name="abstract" key="article.abstract" required=$abstractRequired}<span id="abstractRequiredAsterisk" style="visibility: hidden;">*</div></td>
 			<td width="70%" class="value"><textarea name="abstract[{$formLocale|escape}]" id="abstract" class="textArea" rows="15" cols="60">{$abstract[$formLocale]|escape}</textarea></td>
 		</tr>
-		</table>
+			<tr valign="top">
+			<td width="30%" class="label">{fieldLabel name="originalJournal" required="true" key="plugins.importexport.paperPackageUpload.originalJournal"}</td>
+			<td width="70%" class="value"><input type="text" class="textField" name="originalJournal[{$formLocale|escape}]" id="originalJournal" value="{$originalJournal[$formLocale]|escape}" size="60" maxlength="255" /></td>
+		</tr>
+	
+	</table>
 	</div> <!-- /titleAndAbstract -->
 	
 	<div id="indexing">

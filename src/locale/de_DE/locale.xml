@@ -16,7 +16,7 @@
 	<message key="plugins.importexport.paperPackageUpload.addToExisting">Zu einer existierenden Ausgabe hinzufügen:</message>
 	<message key="plugins.importexport.paperPackageUpload.chooseDestination">Ziel der Einreichung</message>
 	<message key="plugins.importexport.paperPackageUpload.chooseDestinationDescription">Wählen Sie aus, ob neue Einreichungen zu einer existierenden Ausgabe hinzugefügt werden sollen oder in der Redaktions-Warteschlange bleiben sollen.</message>
-	<message key="plugins.importexport.paperPackageUpload.displayName">Paper Package Upload</message>
+	<message key="plugins.importexport.paperPackageUpload.displayName">Schnelleinreichungs-Plug-In</message>
 	<message key="plugins.importexport.paperPackageUpload.description">Ein-Schritt-Einreichungs-Plug-In</message>
 	<message key="plugins.importexport.paperPackageUpload.descriptionLong">Dieses Plug-In ermöglicht es Ihnen, schnell komplette Einreichungen zur Redaktions-Warteschlange oder direkt zu einer Ausgabe hinzuzufügen.</message>
 	<message key="plugins.importexport.paperPackageUpload.issueRequired">Sie müssen eine Ausgabe auswählen, der der Artikel hinzugefügt werden soll.</message>

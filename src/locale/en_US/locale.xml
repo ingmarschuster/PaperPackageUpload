@@ -16,16 +16,22 @@
 	<message key="plugins.importexport.paperPackageUpload.addToExisting">Add to an existing issue:</message>
 	<message key="plugins.importexport.paperPackageUpload.chooseDestination">Submission Destination</message>
 	<message key="plugins.importexport.paperPackageUpload.chooseDestinationDescription">Select whether to add new submissions to an existing issue or to leave in the editing queue.</message>
-	<message key="plugins.importexport.paperPackageUpload.displayName">Paper Package Upload</message>
-	<message key="plugins.importexport.paperPackageUpload.description">One-step publication of preprint, data and analyses</message>
+	<message key="plugins.importexport.paperPackageUpload.displayName">PaperPackageUpload Plugin</message>
+	<message key="plugins.importexport.paperPackageUpload.description">One-step submission plugin</message>
 	<message key="plugins.importexport.paperPackageUpload.descriptionLong">This plugin allows you to quickly add complete submissions to the editing queue or directly into an issue.</message>
 	<message key="plugins.importexport.paperPackageUpload.issueRequired">You must select an issue to add the article to.</message>
 	<message key="plugins.importexport.paperPackageUpload.leaveUnpublished">Leave unpublished</message>
-	<message key="plugins.importexport.paperPackageUpload.saveAndCreateAnother">Save and Create Another</message>
+        <message key="plugins.importexport.paperPackageUpload.datePublished">Published</message>
+        <message key="plugins.importexport.paperPackageUpload.saveAndCreateAnother">Save and Create Another</message>
 	<message key="plugins.importexport.paperPackageUpload.submissionData">Submission Data</message>	
 	<message key="plugins.importexport.paperPackageUpload.submissionDescription">Choose the file to be used as the final galley file for this submission.</message>	
 	<message key="plugins.importexport.paperPackageUpload.submissionRequired">You must upload a file for this submission.</message>	
-    <message key="plugins.importexport.paperPackageUpload.dateRequired">You must enter the date of publication for the original paper.</message>
+        <message key="plugins.importexport.paperPackageUpload.supplRequired">You must upload supplementary material.</message>
+        <message key="plugins.importexport.paperPackageUpload.supplUnpackable">Sorry, we're not able to unpack the format your package has.</message>
+	<message key="plugins.importexport.paperPackageUpload.uploadSubmissionFile">Upload submission file</message>
+	<message key="plugins.importexport.paperPackageUpload.uploadSuppFile">Upload supplementary file</message>
+	<message key="plugins.importexport.paperPackageUpload.dateRequired">You must enter the date of publication for the original paper.</message>
+        <message key="plugins.importexport.paperPackageUpload.authorRequiredFields">The first and last name of the author is required</message>
 
 
 	<message key="plugins.importexport.paperPackageUpload.suppData">Supplementary Data</message>
@@ -34,6 +40,9 @@
 	<message key="plugins.importexport.paperPackageUpload.suppFile">Supplementary File</message>
 	<message key="plugins.importexport.paperPackageUpload.replaceSuppFile">Replace supplementary file</message>
 
+        <message key="plugins.importexport.paperPackageUpload.titleAndAbstract">Title, Abstract and Original Journal</message>
+        <message key="plugins.importexport.paperPackageUpload.originalJournal">Original Journal/ Conference</message>
+        <message key="plugins.importexport.paperPackageUpload.originalJournalRequired">Please enter the Original Journal/ Conference of your article</message>
 
 	<message key="plugins.importexport.paperPackageUpload.success">Article Added</message>
 	<message key="plugins.importexport.paperPackageUpload.successDescription">Article creation was successful.</message>
